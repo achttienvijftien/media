@@ -36,6 +36,9 @@ class Bootstrap {
 	 * Initialize plugin.
 	 */
 	public function init(): void {
+		new Upload();
+		new ImageLoading();
+
 		if ( is_admin() ) {
 			$this->init_admin();
 		}

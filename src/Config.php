@@ -9,8 +9,6 @@ namespace AchttienVijftien\Plugin\Media;
 
 /**
  * Plugin config using WordPress options API.
- *
- * @package AchttienVijftien\Plugin\Media
  */
 class Config {
 
