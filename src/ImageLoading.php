@@ -55,13 +55,13 @@ class ImageLoading {
 	/**
 	 * Get the image src for the image.
 	 *
-	 * @param array $image The image src.
-	 * @param int   $attachment_id The attachment id.
-	 * @param array $size The size.
+	 * @param array        $image The image src.
+	 * @param int          $attachment_id The attachment id.
+	 * @param string|array $size The size.
 	 *
 	 * @return array The image src.
 	 */
-	public function get_attachment_image_src( array $image, int $attachment_id, array $size ): array {
+	public function get_attachment_image_src( array $image, int $attachment_id, $size ): array {
 		if ( ! $image ) {
 			return $image;
 		}
