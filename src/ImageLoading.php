@@ -87,6 +87,11 @@ class ImageLoading {
 			);
 		}
 
+		// if no options set, use full image.
+		if ( ! $options ) {
+			return $image;
+		}
+
 		// build new image url.
 		$image[0] = str_replace( 'i/full', 'i/' . http_build_query( $options ), $image[0] );
 
