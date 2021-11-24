@@ -16,8 +16,24 @@ class ImageLoading {
 	 * ImageLoading constructor.
 	 */
 	public function __construct() {
+		// regular image handling.
+		add_filter( 'pre_option_upload_url_path', [ $this, 'overwrite_upload_url_path' ] );
 		add_filter( 'wp_get_attachment_image_src', [ $this, 'get_attachment_image_src' ], 10, 3 );
-		add_filter( 'wp_get_attachment_url', [ $this, 'get_attachment_url' ], 10, 2 );
+
+		// srcset handling.
+		add_filter( 'wp_calculate_image_srcset_meta', [ $this, 'wp_calculate_image_srcset_meta' ] );
+		add_filter( 'wp_calculate_image_srcset', [ $this, 'wp_calculate_image_srcset' ], 10, 5 );
+	}
+
+	/**
+	 * Overwrites upload_url_path option.
+	 *
+	 * @param mixed $value Current value.
+	 *
+	 * @return string
+	 */
+	public function overwrite_upload_url_path( $value ) {
+		return rtrim( Config::get_instance()->get( 'media_url' ), '/' ) . '/i/full';
 	}
 
 	/**
@@ -53,6 +69,26 @@ class ImageLoading {
 	}
 
 	/**
+	 * Replaces url with filtered url based on requested image size.
+	 *
+	 * @param string $full_url Full url.
+	 * @param array  $size Size array of image.
+	 *
+	 * @return string
+	 */
+	private function replace_url( string $full_url, array $size ) {
+		$options = $this->get_image_options( $size );
+
+		// if no options, return original url.
+		if ( ! $options ) {
+			return $full_url;
+		}
+
+		// build new image url.
+		return str_replace( 'i/full', 'i/' . http_build_query( $options ), $full_url );
+	}
+
+	/**
 	 * Get the image src for the image.
 	 *
 	 * @param array|bool   $image The image src.
@@ -76,47 +112,74 @@ class ImageLoading {
 
 		$image_sizes = wp_get_additional_image_sizes();
 		if ( is_string( $size ) && isset( $image_sizes[ $size ] ) ) {
-			$options = $this->get_image_options( $image_sizes[ $size ] );
+			$size = $image_sizes[ $size ];
 		} else {
-			$options = $this->get_image_options(
-				[
-					'width'  => $image[1],
-					'height' => $image[2],
-					'crop'   => false,
-				]
-			);
+			$size = [
+				'width'  => $image[1],
+				'height' => $image[2],
+				'crop'   => false,
+			];
 		}
 
-		// if no options set, use full image.
-		if ( ! $options ) {
-			return $image;
-		}
-
-		// build new image url.
-		$image[0] = str_replace( 'i/full', 'i/' . http_build_query( $options ), $image[0] );
+		// replace url.
+		$image[0] = $this->replace_url( $image[0], $size );
 
 		return $image;
 	}
 
 	/**
-	 * Get the image src for the image.
+	 * Overwrite image meta with all currently available image sizes.
 	 *
-	 * @param string     $url The image url.
-	 * @param int|string $attachment_id The attachment id.
+	 * @param array $meta Database stored meta data of image.
 	 *
-	 * @return string The image url.
+	 * @return array
 	 */
-	public function get_attachment_url( $url, $attachment_id ): string {
-		if ( ! $this->is_uploaded( $attachment_id ) ) {
-			return $url;
+	public function wp_calculate_image_srcset_meta( $meta ) {
+		$image_sizes = wp_get_additional_image_sizes();
+		$filetype    = wp_check_filetype( $meta['file'] );
+
+		$sizes = [];
+		foreach ( $image_sizes as $handle => $image_size ) {
+			$sizes[ $handle ] = [
+				'file'      => basename( $meta['file'] ),
+				'width'     => $image_size['width'],
+				'height'    => $image_size['height'],
+				'mime-type' => $filetype['type'],
+			];
 		}
 
-		$upload_dir = wp_get_upload_dir();
+		$meta['sizes'] = $sizes ?? $meta['sizes'];
 
-		return str_replace(
-			$upload_dir['baseurl'],
-			rtrim( Config::get_instance()->get( 'media_url' ), '/' ) . '/i/full',
-			$url
-		);
+		return $meta;
+	}
+
+	/**
+	 * Overwrite image srcset sources with media url of given sources.
+	 *
+	 * @param array      $sources Sources array defined by default WP function.
+	 * @param array      $sizes Sizes of original image.
+	 * @param string     $src Image url.
+	 * @param array      $meta Image meta data.
+	 * @param string|int $attachment_id Attachment id.
+	 *
+	 * @return array
+	 */
+	public function wp_calculate_image_srcset( $sources, $sizes, $src, $meta, $attachment_id ) {
+		// skip if not uploaded to api.
+		if ( ! $this->is_uploaded( $attachment_id ) ) {
+			return $sources;
+		}
+
+		// loop through sources to replace urls where needed.
+		foreach ( $sources as &$source ) {
+			foreach ( $meta['sizes'] as $size ) {
+				if ( $size['width'] === $source['value'] ) {
+					$source['url'] = $this->replace_url( $source['url'], $size );
+					continue 2;
+				}
+			}
+		}
+
+		return $sources;
 	}
 }
