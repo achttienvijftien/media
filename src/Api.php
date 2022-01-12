@@ -17,9 +17,9 @@ class Api {
 	/**
 	 * Holds access token.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	private static array $access_token;
+	private static ?array $access_token = null;
 
 	/**
 	 * Retrieves access token.

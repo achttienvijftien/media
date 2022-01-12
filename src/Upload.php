@@ -16,7 +16,8 @@ class Upload {
 	 * Upload constructor.
 	 */
 	public function __construct() {
-		add_action( 'add_attachment', [ $this, 'add_attachment' ] );
+		add_action( 'add_attachment', [ $this, 'add_attachment' ], 999 );
+		add_filter( 'wp_image_editors', [ $this, 'disable_image_editors' ] );
 	}
 
 	/**
@@ -51,5 +52,16 @@ class Upload {
 
 		// delete file from local filesystem.
 		unlink( $file );
+	}
+
+	/**
+	 * Disable image editors so image won't be processed after upload.
+	 *
+	 * @param array $editors Supported image editors.
+	 *
+	 * @return array
+	 */
+	public function disable_image_editors( array $editors ): array {
+		return [];
 	}
 }
