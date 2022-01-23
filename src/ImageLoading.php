@@ -173,7 +173,15 @@ class ImageLoading {
 		// loop through sources to replace urls where needed.
 		foreach ( $sources as &$source ) {
 			foreach ( $meta['sizes'] as $size ) {
-				if ( $size['width'] === $source['value'] ) {
+				// check if width matches width source and if ratio is within 1px.
+				if ( $size['width'] === $source['value'] &&
+					wp_image_matches_ratio(
+						(int) $size['width'],
+						(int) $size['height'],
+						(int) $sizes[0],
+						(int) $sizes[1]
+					)
+				) {
 					$source['url'] = $this->replace_url( $source['url'], $size );
 					continue 2;
 				}
