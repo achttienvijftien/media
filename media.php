@@ -3,7 +3,7 @@
  * Plugin Name:     1815 - Media
  * Plugin URI:      https://1815.nl
  * Description:     Media plugin by 1815
- * Version:         0.2.2
+ * Version:         0.2.3
  * Author:          1815 <it@1815.nl>
  * Author URI:      https://1815.nl
  * Text Domain:     1815-media

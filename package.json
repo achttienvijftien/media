@@ -1,6 +1,6 @@
 {
   "name": "media",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "./assets/js/index.js",
   "author": "1815",
   "scripts": {
