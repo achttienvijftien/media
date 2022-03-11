@@ -23,6 +23,9 @@ class ImageLoading {
 		// srcset handling.
 		add_filter( 'wp_calculate_image_srcset_meta', [ $this, 'wp_calculate_image_srcset_meta' ] );
 		add_filter( 'wp_calculate_image_srcset', [ $this, 'wp_calculate_image_srcset' ], 10, 5 );
+
+		// dns prefetch.
+		add_filter( 'wp_resource_hints', [ $this, 'dns_prefetch' ], 10, 2 );
 	}
 
 	/**
@@ -189,5 +192,30 @@ class ImageLoading {
 		}
 
 		return $sources;
+	}
+
+	/**
+	 * Add media url to dns prefetch.
+	 *
+	 * @param array  $urls Urls to hint.
+	 * @param string $relation_type Relation type.
+	 *
+	 * @return array
+	 */
+	public function dns_prefetch( array $urls, string $relation_type ): array {
+		if ( 'dns-prefetch' !== $relation_type ) {
+			return $urls;
+		}
+
+		$config = Config::get_instance();
+		$url    = wp_parse_url( $config->get( 'media_url' ) );
+
+		if ( ! $url ) {
+			return $urls;
+		}
+
+		$urls[] = $url['host'];
+
+		return $urls;
 	}
 }

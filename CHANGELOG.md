@@ -7,4 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Added media url to dns-prefetch
+
 [unreleased]: https://github.com/achttienvijftien/media
