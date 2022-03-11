@@ -201,6 +201,7 @@ class ImageLoading {
 	 * @param string $relation_type Relation type.
 	 *
 	 * @return array
+	 * @since 0.3.0
 	 */
 	public function dns_prefetch( array $urls, string $relation_type ): array {
 		if ( 'dns-prefetch' !== $relation_type ) {
