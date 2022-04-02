@@ -204,7 +204,7 @@ class ImageLoading {
 	 * @since 0.3.0
 	 */
 	public function dns_prefetch( array $urls, string $relation_type ): array {
-		if ( 'dns-prefetch' !== $relation_type ) {
+		if ( 'dns-prefetch' !== $relation_type && 'preconnect' !== $relation_type ) {
 			return $urls;
 		}
 
@@ -215,7 +215,7 @@ class ImageLoading {
 			return $urls;
 		}
 
-		$urls[] = $url['host'];
+		$urls[] = '//' . $url['host'];
 
 		return $urls;
 	}
