@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.1] - 2022-04-02
+
 ### Added
 
 - Added media url to preconnect resource hints as well
@@ -17,5 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.3.0...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.3.1...master
+
+[0.3.1]: https://github.com/achttienvijftien/media/compare/0.3.0...0.3.1
+
 [0.3.0]: https://github.com/achttienvijftien/media/compare/0.2.3...0.3.0
