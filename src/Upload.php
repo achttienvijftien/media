@@ -7,6 +7,8 @@
 
 namespace AchttienVijftien\Plugin\Media;
 
+use WP_Image_Editor;
+
 /**
  * All upload logic for the plugin.
  */
@@ -17,8 +19,76 @@ class Upload {
 	 */
 	public function __construct() {
 		add_action( 'add_attachment', [ $this, 'add_attachment' ], 999 );
+		add_filter( 'wp_save_image_editor_file', [ $this, 'save_image_editor_file' ], 999, 5 );
 		add_filter( 'wp_generate_attachment_metadata', [ $this, 'wp_generate_attachment_metadata' ], 999, 2 );
-		add_filter( 'wp_image_editors', [ $this, 'disable_image_editors' ] );
+		add_filter( 'wp_update_attachment_metadata', [ $this, 'wp_update_attachment_metadata' ], 999, 2 );
+	}
+
+	/**
+	 * Gets minimum image sizes.
+	 *
+	 * @param string $path Path to image.
+	 * @param string $mime Mime type of image.
+	 *
+	 * @return array[]
+	 */
+	private function get_image_sizes( string $path, string $mime ): array {
+		return [
+			'thumbnail' => [
+				'width'     => 150,
+				'height'    => 150,
+				'file'      => basename( $path ),
+				'mime-type' => $mime,
+			],
+		];
+	}
+
+	/**
+	 * Uploads local image to mediatool.
+	 *
+	 * @param int    $attachment_id Attachment ID.
+	 * @param string $local_file Local image file path.
+	 *
+	 * @return bool
+	 */
+	private function upload_file( int $attachment_id, string $local_file ): bool {
+		$upload_dir = wp_upload_dir();
+		$path       = str_replace( [ $upload_dir['basedir'], basename( $local_file ) ], '', $local_file );
+
+		// upload file to media tool.
+		$upload_success = Api::upload(
+			$local_file,
+			[
+				'path' => $path,
+			]
+		);
+
+		if ( ! $upload_success ) {
+			return false;
+		}
+
+		// add flag to attachment meta.
+		add_post_meta( $attachment_id, '_1815_media_uploaded', true );
+
+		$image_size = wp_getimagesize( $local_file );
+		if ( $image_size ) {
+			wp_update_attachment_metadata(
+				$attachment_id,
+				[
+					'_by_1815_media' => true,
+					'width'          => $image_size[0],
+					'height'         => $image_size[1],
+					'mime-type'      => $image_size['mime'],
+					'file'           => trailingslashit( $upload_dir['subdir'] ) . basename( $local_file ),
+					'sizes'          => $this->get_image_sizes( $local_file, $image_size['mime'] ),
+				]
+			);
+		}
+
+		// delete file from local filesystem.
+		unlink( $local_file );
+
+		return true;
 	}
 
 	/**
@@ -26,54 +96,30 @@ class Upload {
 	 *
 	 * @param int $attachment_id The attachment id.
 	 */
-	public function add_attachment( int $attachment_id ): void {
+	public function add_attachment( $attachment_id ): void {
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			return;
 		}
 
-		$upload_dir = wp_upload_dir();
-		$file       = get_attached_file( $attachment_id );
+		$file = get_attached_file( $attachment_id );
+		$this->upload_file( (int) $attachment_id, $file );
+	}
 
-		$path = str_replace( [ $upload_dir['basedir'], basename( $file ) ], '', $file );
+	/**
+	 * Handles edited image saves.
+	 *
+	 * @param null|bool       $override Whether to override saving the edited image.
+	 * @param string          $filename Local path of image file.
+	 * @param WP_Image_Editor $image Edited image object.
+	 * @param string          $mime_type Mime type of image.
+	 * @param int             $attachment_id Attachment ID.
+	 *
+	 * @return bool|null
+	 */
+	public function save_image_editor_file( $override, $filename, $image, $mime_type, $attachment_id ): ?bool {
+		$saved_image = $image->save( $filename, $mime_type );
 
-		// upload file to media tool.
-		$upload_success = Api::upload(
-			$file,
-			[
-				'path' => $path,
-			]
-		);
-
-		if ( ! $upload_success ) {
-			return;
-		}
-
-		// add flag to attachment meta.
-		add_post_meta( $attachment_id, '_1815_media_uploaded', true );
-
-		$image_size = wp_getimagesize( $file );
-		if ( $image_size ) {
-			wp_update_attachment_metadata(
-				$attachment_id,
-				[
-					'width'     => $image_size[0],
-					'height'    => $image_size[1],
-					'mime-type' => $image_size['mime'],
-					'file'      => trailingslashit( $upload_dir['subdir'] ) . basename( $file ),
-					'sizes'     => [
-						'thumbnail' => [
-							'width'     => 150,
-							'height'    => 150,
-							'file'      => basename( $file ),
-							'mime-type' => $image_size['mime'],
-						],
-					],
-				]
-			);
-		}
-
-		// delete file from local filesystem.
-		unlink( $file );
+		return $this->upload_file( (int) $attachment_id, $saved_image['path'] );
 	}
 
 	/**
@@ -97,13 +143,27 @@ class Upload {
 	}
 
 	/**
-	 * Disable image editors so image won't be processed after upload.
+	 * Resets image sizes created by WordPress core or external plugins.
 	 *
-	 * @param array $editors Supported image editors.
+	 * @param array $meta The attachment meta data.
+	 * @param int   $attachment_id Attachment ID.
 	 *
-	 * @return array
+	 * @return mixed
 	 */
-	public function disable_image_editors( array $editors ): array {
-		return [];
+	public function wp_update_attachment_metadata( $meta, $attachment_id ) {
+		if ( ! empty( $meta['_by_1815_media'] ) ) {
+			unset( $meta['_by_1815_media'] );
+
+			return $meta;
+		}
+
+		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+			return $meta;
+		}
+
+		unset( $meta['sizes'] );
+		$meta['sizes'] = $this->get_image_sizes( $meta['file'], $meta['mime-type'] );
+
+		return $meta;
 	}
 }

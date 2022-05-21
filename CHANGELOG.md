@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Implemented editable image functionality
+
 ## [0.3.1] - 2022-04-02
 
 ### Added
