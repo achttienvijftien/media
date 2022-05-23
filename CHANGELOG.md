@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-05-23
+
 ### Fixed
 
 - Thumbnails in media library are now using the correct size urls
@@ -29,7 +31,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.4.0...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.4.1...master
+
+[0.4.1]: https://github.com/achttienvijftien/media/compare/0.4.0...0.4.1
 
 [0.4.0]: https://github.com/achttienvijftien/media/compare/0.3.1...0.4.0
 
