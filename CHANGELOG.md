@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2022-05-23
+
 ### Added
 
 - Implemented editable image functionality
@@ -23,7 +25,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.3.1...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.4.0...master
+
+[0.4.0]: https://github.com/achttienvijftien/media/compare/0.3.1...0.4.0
 
 [0.3.1]: https://github.com/achttienvijftien/media/compare/0.3.0...0.3.1
 
