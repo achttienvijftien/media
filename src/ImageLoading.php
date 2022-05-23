@@ -20,6 +20,9 @@ class ImageLoading {
 		add_filter( 'pre_option_upload_url_path', [ $this, 'overwrite_upload_url_path' ] );
 		add_filter( 'wp_get_attachment_image_src', [ $this, 'get_attachment_image_src' ], 10, 3 );
 
+		// media library handling.
+		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'prepare_attachment_for_js' ], 10, 2 );
+
 		// srcset handling.
 		add_filter( 'wp_calculate_image_srcset_meta', [ $this, 'wp_calculate_image_srcset_meta' ] );
 		add_filter( 'wp_calculate_image_srcset', [ $this, 'wp_calculate_image_srcset' ], 10, 5 );
@@ -128,6 +131,37 @@ class ImageLoading {
 		$image[0] = $this->replace_url( $image[0], $size );
 
 		return $image;
+	}
+
+	/**
+	 * Sets correct sizes urls for media library.
+	 *
+	 * @param array    $response Response array.
+	 * @param \WP_Post $attachment Attachment object.
+	 *
+	 * @return array
+	 */
+	public function prepare_attachment_for_js( $response, $attachment ) {
+		if ( ! $this->is_uploaded( (int) $attachment->ID ) ) {
+			return $response;
+		}
+
+		$image_sizes = wp_get_additional_image_sizes();
+		foreach ( $response['sizes'] as $size_name => &$size ) {
+			if ( is_string( $size_name ) && isset( $image_sizes[ $size_name ] ) ) {
+				$size_input = $image_sizes[ $size_name ];
+			} else {
+				$size_input = [
+					'width'  => $size['width'],
+					'height' => $size['height'],
+					'crop'   => false,
+				];
+			}
+
+			$size['url'] = $this->replace_url( $response['url'], $size_input );
+		}
+
+		return $response;
 	}
 
 	/**

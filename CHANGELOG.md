@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Thumbnails in media library are now using the correct size urls
+
 ## [0.4.0] - 2022-05-23
 
 ### Added
