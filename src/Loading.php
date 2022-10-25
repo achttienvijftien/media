@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the logic for ImageLoading.
+ * This file contains the logic for Loading.
  *
  * @package AchttienVijftien\Plugin\Media
  */
@@ -10,18 +10,19 @@ namespace AchttienVijftien\Plugin\Media;
 /**
  * All public facing logic for the plugin.
  */
-class ImageLoading {
+class Loading {
 
 	/**
-	 * ImageLoading constructor.
+	 * Loading constructor.
 	 */
 	public function __construct() {
-		// regular image handling.
-		add_filter( 'pre_option_upload_url_path', [ $this, 'overwrite_upload_url_path' ] );
-		add_filter( 'wp_get_attachment_image_src', [ $this, 'get_attachment_image_src' ], 10, 3 );
-
 		// media library handling.
+		add_filter( 'pre_option_upload_url_path', [ $this, 'overwrite_upload_url_path' ] );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'prepare_attachment_for_js' ], 10, 2 );
+
+		// regular image handling.
+		add_filter( 'wp_get_attachment_url', [ $this, 'get_attachment_url' ], 10, 2 );
+		add_filter( 'wp_get_attachment_image_src', [ $this, 'get_attachment_image_src' ], 10, 3 );
 
 		// srcset handling.
 		add_filter( 'wp_calculate_image_srcset_meta', [ $this, 'wp_calculate_image_srcset_meta' ] );
@@ -39,7 +40,7 @@ class ImageLoading {
 	 * @return string
 	 */
 	public function overwrite_upload_url_path( $value ) {
-		return rtrim( Config::get_instance()->get( 'media_url' ), '/' ) . '/i/full';
+		return rtrim( Config::get_instance()->get( 'media_url' ), '/' ) . '/dl';
 	}
 
 	/**
@@ -95,6 +96,26 @@ class ImageLoading {
 	}
 
 	/**
+	 * Fixes default url of images.
+	 *
+	 * @param string $url Url of attachment.
+	 * @param int    $attachment_id Attachment id.
+	 *
+	 * @return string
+	 */
+	public function get_attachment_url( $url, $attachment_id ) {
+		if ( ! $this->is_uploaded( $attachment_id ) ) {
+			return $url;
+		}
+
+		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+			return $url;
+		}
+
+		return str_replace( 'dl/', 'i/full/', $url );
+	}
+
+	/**
 	 * Get the image src for the image.
 	 *
 	 * @param array|bool   $image The image src.
@@ -143,6 +164,11 @@ class ImageLoading {
 	 */
 	public function prepare_attachment_for_js( $response, $attachment ) {
 		if ( ! $this->is_uploaded( (int) $attachment->ID ) ) {
+			return $response;
+		}
+
+		// if not an image, return original response.
+		if ( ! wp_attachment_is_image( $attachment->ID ) ) {
 			return $response;
 		}
 

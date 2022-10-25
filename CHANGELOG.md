@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Added support of uploading attachment types other than images
+
 ## [0.4.1] - 2022-05-23
 
 ### Fixed
