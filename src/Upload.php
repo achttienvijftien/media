@@ -20,6 +20,7 @@ class Upload {
 	public function __construct() {
 		add_filter( 'upload_mimes', [ $this, 'allowed_mime_types' ], 999 );
 		add_action( 'add_attachment', [ $this, 'add_attachment' ], 999 );
+		add_action( 'delete_attachment', [ $this, 'delete_attachment' ], 999 );
 		add_filter( 'wp_save_image_editor_file', [ $this, 'save_image_editor_file' ], 999, 5 );
 		add_filter( 'wp_generate_attachment_metadata', [ $this, 'wp_generate_attachment_metadata' ], 999, 2 );
 		add_filter( 'wp_update_attachment_metadata', [ $this, 'wp_update_attachment_metadata' ], 999, 2 );
@@ -190,6 +191,31 @@ class Upload {
 
 		$file = get_attached_file( $attachment_id );
 		$this->upload_file( (int) $attachment_id, $file );
+	}
+
+	/**
+	 * Deletes attachment from mediatool.
+	 *
+	 * @param int $attachment_id Attachment id.
+	 *
+	 * @return void
+	 */
+	public function delete_attachment( $attachment_id ): void {
+		$is_uploaded = get_post_meta( $attachment_id, '_1815_media_uploaded', true );
+		if ( ! $is_uploaded ) {
+			return;
+		}
+
+		// get attachment meta data.
+		$attachment_meta = wp_get_attachment_metadata( $attachment_id );
+
+		// check if file path is set.
+		if ( empty( $attachment_meta['file'] ) ) {
+			return;
+		}
+
+		// send removal request to mediatool.
+		Api::delete( $attachment_meta['file'] );
 	}
 
 	/**

@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- When attachments are deleted from media library they'll be deleted from mediatool as well
 - Added support of uploading attachment types other than images
 
 ## [0.4.1] - 2022-05-23
