@@ -153,24 +153,22 @@ class Upload {
 		// add flag to attachment meta.
 		add_post_meta( $attachment_id, '_1815_media_uploaded', true );
 
-		// if not an image, stop processing.
-		if ( ! wp_attachment_is_image( $attachment_id ) ) {
-			return true;
-		}
-
-		$image_size = wp_getimagesize( $local_file );
-		if ( $image_size ) {
-			wp_update_attachment_metadata(
-				$attachment_id,
-				[
-					'_by_1815_media' => true,
-					'width'          => $image_size[0],
-					'height'         => $image_size[1],
-					'mime-type'      => $image_size['mime'],
-					'file'           => trailingslashit( $upload_dir['subdir'] ) . basename( $local_file ),
-					'sizes'          => $this->get_image_sizes( $local_file, $image_size['mime'] ),
-				]
-			);
+		// if an image, add extra meta data.
+		if ( wp_attachment_is_image( $attachment_id ) ) {
+			$image_size = wp_getimagesize( $local_file );
+			if ( $image_size ) {
+				wp_update_attachment_metadata(
+					$attachment_id,
+					[
+						'_by_1815_media' => true,
+						'width'          => $image_size[0],
+						'height'         => $image_size[1],
+						'mime-type'      => $image_size['mime'],
+						'file'           => trailingslashit( $upload_dir['subdir'] ) . basename( $local_file ),
+						'sizes'          => $this->get_image_sizes( $local_file, $image_size['mime'] ),
+					]
+				);
+			}
 		}
 
 		// delete file from local filesystem.
@@ -245,7 +243,7 @@ class Upload {
 	 *
 	 * @return array
 	 */
-	public function wp_generate_attachment_metadata( array $metadata, $attachment_id ): array {
+	public function wp_generate_attachment_metadata( $metadata, $attachment_id ) {
 		if ( ! get_post_meta( $attachment_id, '_1815_media_uploaded', true ) ) {
 			return $metadata;
 		}
