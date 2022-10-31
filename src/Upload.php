@@ -129,7 +129,7 @@ class Upload {
 	/**
 	 * Uploads local file to mediatool.
 	 *
-	 * @param int    $attachment_id Attachment ID.
+	 * @param int $attachment_id Attachment ID.
 	 * @param string $local_file Local file path.
 	 *
 	 * @return bool
@@ -185,10 +185,6 @@ class Upload {
 	 * @param int $attachment_id The attachment id.
 	 */
 	public function add_attachment( $attachment_id ): void {
-		if ( ! wp_attachment_is_image( $attachment_id ) ) {
-			return;
-		}
-
 		$file = get_attached_file( $attachment_id );
 		$this->upload_file( (int) $attachment_id, $file );
 	}
@@ -206,26 +202,32 @@ class Upload {
 			return;
 		}
 
-		// get attachment meta data.
-		$attachment_meta = wp_get_attachment_metadata( $attachment_id );
+		// get file path.
+		$attachment_path = get_post_meta( $attachment_id, '_wp_attached_file', true );
+		if ( ! $attachment_path ) {
+			// get attachment meta data.
+			$attachment_meta = wp_get_attachment_metadata( $attachment_id );
+			// check if file path is set in meta data.
+			$attachment_path = $attachment_meta['file'] ?? null;
+		}
 
 		// check if file path is set.
-		if ( empty( $attachment_meta['file'] ) ) {
+		if ( ! $attachment_path ) {
 			return;
 		}
 
 		// send removal request to mediatool.
-		Api::delete( $attachment_meta['file'] );
+		Api::delete( $attachment_path );
 	}
 
 	/**
 	 * Handles edited image saves.
 	 *
-	 * @param null|bool       $override Whether to override saving the edited image.
-	 * @param string          $filename Local path of image file.
+	 * @param null|bool $override Whether to override saving the edited image.
+	 * @param string $filename Local path of image file.
 	 * @param WP_Image_Editor $image Edited image object.
-	 * @param string          $mime_type Mime type of image.
-	 * @param int             $attachment_id Attachment ID.
+	 * @param string $mime_type Mime type of image.
+	 * @param int $attachment_id Attachment ID.
 	 *
 	 * @return bool|null
 	 */
@@ -238,7 +240,7 @@ class Upload {
 	/**
 	 * Makes sure the original metadata is kept.
 	 *
-	 * @param array      $metadata The generated metadata.
+	 * @param array $metadata The generated metadata.
 	 * @param int|string $attachment_id The attachment id.
 	 *
 	 * @return array
@@ -259,7 +261,7 @@ class Upload {
 	 * Resets image sizes created by WordPress core or external plugins.
 	 *
 	 * @param array $meta The attachment meta data.
-	 * @param int   $attachment_id Attachment ID.
+	 * @param int $attachment_id Attachment ID.
 	 *
 	 * @return mixed
 	 */
