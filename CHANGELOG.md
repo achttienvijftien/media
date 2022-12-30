@@ -7,9 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2022-12-30
+
 ### Added
 
-- When attachments are deleted from media library they'll be deleted from mediatool as well
+- When attachments are deleted from media library they'll be deleted from media as well
 - Added support of uploading attachment types other than images
 
 ## [0.4.1] - 2022-05-23
@@ -36,7 +38,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.4.1...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.5.0...master
+
+[0.5.0]: https://github.com/achttienvijftien/media/compare/0.4.1...0.5.0
 
 [0.4.1]: https://github.com/achttienvijftien/media/compare/0.4.0...0.4.1
 
