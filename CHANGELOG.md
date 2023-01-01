@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.1] - 2023-01-01
+
 ### Fixed
 
 - Determine mime-type when not yet present in metadata by local file if it still exists
@@ -42,7 +44,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.5.0...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.5.1...master
+
+[0.5.1]: https://github.com/achttienvijftien/media/compare/0.5.0...0.5.1
 
 [0.5.0]: https://github.com/achttienvijftien/media/compare/0.4.1...0.5.0
 
