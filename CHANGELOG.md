@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Determine mime-type when not yet present in metadata by local file if it still exists
+
 ## [0.5.0] - 2022-12-30
 
 ### Added

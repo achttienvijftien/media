@@ -274,6 +274,23 @@ class Upload {
 			return $meta;
 		}
 
+		// no mime-type present, try to determine based on local file (if it still exists).
+		if ( empty( $meta['mime-type'] ) && ! empty( $meta['file'] ) && function_exists( 'mime_content_type' ) ) {
+			$upload_dir = wp_upload_dir();
+			$local_path = $upload_dir['basedir'] . '/' . $meta['file'];
+
+			if ( ! file_exists( $local_path ) ) {
+				return $meta;
+			}
+
+			$mime_type = mime_content_type( $local_path );
+			if ( ! $mime_type ) {
+				return $meta;
+			}
+
+			$meta['mime-type'] = $mime_type;
+		}
+
 		unset( $meta['sizes'] );
 		$meta['sizes'] = $this->get_image_sizes( $meta['file'], $meta['mime-type'] );
 
