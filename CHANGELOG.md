@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Added WordPress 6.2 support by changing requests to WP builtin function where possible and where needed based
+  implementation on WordPress version
+
 ## [0.5.1] - 2023-01-01
 
 ### Fixed

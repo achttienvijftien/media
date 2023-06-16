@@ -24,6 +24,8 @@ class Upload {
 		add_filter( 'wp_save_image_editor_file', [ $this, 'save_image_editor_file' ], 999, 5 );
 		add_filter( 'wp_generate_attachment_metadata', [ $this, 'wp_generate_attachment_metadata' ], 999, 2 );
 		add_filter( 'wp_update_attachment_metadata', [ $this, 'wp_update_attachment_metadata' ], 999, 2 );
+
+		add_action( 'http_api_curl', [ $this, 'before_curl_request' ], 10, 3 );
 	}
 
 	/**
@@ -295,5 +297,23 @@ class Upload {
 		$meta['sizes'] = $this->get_image_sizes( $meta['file'], $meta['mime-type'] );
 
 		return $meta;
+	}
+
+	/**
+	 * Adds POST data to media API upload requests.
+	 *
+	 * @param \CurlHandle $handle Handle of current cURL request.
+	 * @param array $request Request parameters.
+	 * @param string $url Request URL.
+	 *
+	 * @return void
+	 */
+	public function before_curl_request( \CurlHandle $handle, array $request, string $url ): void {
+		if ( 'POST' !== $request['method'] || ! str_starts_with( $url, Config::get_instance()->get( 'api_url' ) ) ) {
+			return;
+		}
+
+		// @codingStandardsIgnoreStart WordPress.WP.AlternativeFunctions.curl_curl_setopt
+		curl_setopt( $handle, CURLOPT_POSTFIELDS, $request['body'] );
 	}
 }
