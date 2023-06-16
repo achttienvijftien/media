@@ -1,10 +1,10 @@
 === 1815 - Media ===
 Contributors: 1815
 Tags: media
-Requires at least: 4.5
-Tested up to: 5.8.1
+Requires at least: 5.9
+Tested up to: 6.2.2
 Requires PHP: 7.4
-Stable tag: 0.5.1
+Stable tag: 0.6.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 

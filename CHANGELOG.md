@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2023-06-17
+
 ### Fixed
 
 - Added WordPress 6.2 support by changing requests to WP builtin function where possible and where needed based
@@ -49,7 +51,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.5.1...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.6.0...master
+
+[0.6.0]: https://github.com/achttienvijftien/media/compare/0.5.1...0.6.0
 
 [0.5.1]: https://github.com/achttienvijftien/media/compare/0.5.0...0.5.1
 
