@@ -108,7 +108,11 @@ class Api {
 			]
 		);
 
-		$response_body = json_decode( $response->body, true );
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+
+		$response_body = json_decode( $response['body'] ?? '', true );
 
 		return ! empty( $response_body['success'] ) && $response_body['success'];
 	}
@@ -137,7 +141,11 @@ class Api {
 			],
 		);
 
-		$response_body = json_decode( $response->body, true );
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+
+		$response_body = json_decode( $response['body'] ?? '', true );
 
 		return ! empty( $response_body['success'] ) && $response_body['success'];
 	}

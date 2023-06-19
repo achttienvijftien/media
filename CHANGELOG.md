@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.1] - 2023-06-19
+
+### Fixed
+
+- Fixed bug with wrong expected response type of `WP_Http::request()` (array instead of object)
+
 ## [0.6.0] - 2023-06-17
 
 ### Fixed
@@ -51,7 +57,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.6.0...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.6.1...master
+
+[0.6.1]: https://github.com/achttienvijftien/media/compare/0.6.0...0.6.1
 
 [0.6.0]: https://github.com/achttienvijftien/media/compare/0.5.1...0.6.0
 
