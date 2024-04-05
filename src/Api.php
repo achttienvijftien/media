@@ -81,7 +81,7 @@ class Api {
 	 * Upload file to API.
 	 *
 	 * @param string $file_path Local file path.
-	 * @param array $data Data to send with upload request.
+	 * @param array  $data Data to send with upload request.
 	 *
 	 * @return bool|null
 	 */

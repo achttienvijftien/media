@@ -17,7 +17,6 @@ class Loading {
 	 */
 	public function __construct() {
 		// media library handling.
-		add_filter( 'pre_option_upload_url_path', [ $this, 'overwrite_upload_url_path' ] );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'prepare_attachment_for_js' ], 10, 2 );
 
 		// regular image handling.
@@ -30,17 +29,6 @@ class Loading {
 
 		// dns prefetch.
 		add_filter( 'wp_resource_hints', [ $this, 'dns_prefetch' ], 10, 2 );
-	}
-
-	/**
-	 * Overwrites upload_url_path option.
-	 *
-	 * @param mixed $value Current value.
-	 *
-	 * @return string
-	 */
-	public function overwrite_upload_url_path( $value ) {
-		return rtrim( Config::get_instance()->get( 'media_url' ), '/' ) . '/dl';
 	}
 
 	/**
@@ -96,7 +84,7 @@ class Loading {
 	}
 
 	/**
-	 * Fixes default url of images.
+	 * Replaces URL of uploaded attachments.
 	 *
 	 * @param string $url Url of attachment.
 	 * @param int    $attachment_id Attachment id.
@@ -107,6 +95,19 @@ class Loading {
 		if ( ! $this->is_uploaded( $attachment_id ) ) {
 			return $url;
 		}
+
+		$file = get_post_meta( $attachment_id, '_wp_attached_file', true );
+		if ( ! $file ) {
+			return $url;
+		}
+
+		$media_url = Config::get_instance()->get( 'media_url' );
+		if ( ! $media_url ) {
+			return $url;
+		}
+
+		// override URL.
+		$url = rtrim( $media_url, '/' ) . '/dl/' . $file;
 
 		if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			return $url;

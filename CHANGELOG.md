@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Implemented a better way of overriding attachment URL's without needing to force override generic upload URL
+
 ## [0.6.1] - 2023-06-19
 
 ### Fixed
