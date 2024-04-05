@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2024-04-05
+
 ### Changed
 
 - Implemented a better way of overriding attachment URL's without needing to force override generic upload URL
@@ -61,7 +63,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.6.1...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.7.0...master
+
+[0.7.0]: https://github.com/achttienvijftien/media/compare/0.6.1...0.7.0
 
 [0.6.1]: https://github.com/achttienvijftien/media/compare/0.6.0...0.6.1
 
