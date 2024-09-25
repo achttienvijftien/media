@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2024-09-25
+
 ### Fixed
 
 - Better handling of image srcsets
@@ -67,7 +69,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.7.0...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.7.1...master
+
+[0.7.1]: https://github.com/achttienvijftien/media/compare/0.7.0...0.7.1
 
 [0.7.0]: https://github.com/achttienvijftien/media/compare/0.6.1...0.7.0
 
