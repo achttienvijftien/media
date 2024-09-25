@@ -203,6 +203,14 @@ class Loading {
 		$filetype    = wp_check_filetype( $meta['file'] );
 
 		$sizes = [];
+		// original image size.
+		$sizes['original'] = [
+			'file'      => basename( $meta['file'] ),
+			'width'     => $meta['width'],
+			'height'    => $meta['height'],
+			'mime-type' => $filetype['type'],
+		];
+
 		foreach ( $image_sizes as $handle => $image_size ) {
 			$sizes[ $handle ] = [
 				'file'      => basename( $meta['file'] ),
@@ -239,14 +247,14 @@ class Loading {
 			foreach ( $meta['sizes'] as $size ) {
 				// check if width matches width source and if ratio is within 1px.
 				if ( $size['width'] === $source['value'] &&
-					wp_image_matches_ratio(
-						(int) $size['width'],
-						(int) $size['height'],
-						(int) $sizes[0],
-						(int) $sizes[1]
-					)
+				     wp_image_matches_ratio(
+					     (int) $size['width'],
+					     (int) $size['height'],
+					     (int) $sizes[0],
+					     (int) $sizes[1]
+				     )
 				) {
-					$source['url'] = $this->replace_url( $source['url'], $size );
+					$source['url'] = $this->replace_url( $this->get_attachment_url( $source['url'], $attachment_id ), $size );
 					continue 2;
 				}
 			}
