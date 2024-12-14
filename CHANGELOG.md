@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-12-14
+
 ### Added
 
 - Add Gravity Forms file upload field compatibility
@@ -77,7 +79,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added media url to dns-prefetch
 
-[unreleased]: https://github.com/achttienvijftien/media/compare/0.7.1...master
+[unreleased]: https://github.com/achttienvijftien/media/compare/0.8.0...master
+
+[0.8.0]: https://github.com/achttienvijftien/media/compare/0.7.1...0.8.0
 
 [0.7.1]: https://github.com/achttienvijftien/media/compare/0.7.0...0.7.1
 
