@@ -7,6 +7,8 @@
 
 namespace AchttienVijftien\Plugin\Media;
 
+use AchttienVijftien\Plugin\Media\Compatibility\GravityForms;
+
 /**
  * Bootstrap plugin.
  */
@@ -38,6 +40,9 @@ class Bootstrap {
 	public function init(): void {
 		new Upload();
 		new Loading();
+
+		// third party compatibility.
+		new GravityForms();
 
 		if ( is_admin() ) {
 			$this->init_admin();

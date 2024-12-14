@@ -132,7 +132,7 @@ class Upload {
 	 * Uploads local file to mediatool.
 	 *
 	 * @param int    $attachment_id Attachment ID.
-	 * @param string $local_file Local file path.
+	 * @param string $local_file    Local file path.
 	 *
 	 * @return bool
 	 */
@@ -174,7 +174,7 @@ class Upload {
 		}
 
 		// delete file from local filesystem.
-		unlink( $local_file );
+		wp_delete_file( $local_file );
 
 		return true;
 	}
@@ -223,10 +223,10 @@ class Upload {
 	/**
 	 * Handles edited image saves.
 	 *
-	 * @param null|bool       $override Whether to override saving the edited image.
-	 * @param string          $filename Local path of image file.
-	 * @param WP_Image_Editor $image Edited image object.
-	 * @param string          $mime_type Mime type of image.
+	 * @param null|bool       $override      Whether to override saving the edited image.
+	 * @param string          $filename      Local path of image file.
+	 * @param WP_Image_Editor $image         Edited image object.
+	 * @param string          $mime_type     Mime type of image.
 	 * @param int             $attachment_id Attachment ID.
 	 *
 	 * @return bool|null
@@ -240,7 +240,7 @@ class Upload {
 	/**
 	 * Makes sure the original metadata is kept.
 	 *
-	 * @param array      $metadata The generated metadata.
+	 * @param array      $metadata      The generated metadata.
 	 * @param int|string $attachment_id The attachment id.
 	 *
 	 * @return array
@@ -260,7 +260,7 @@ class Upload {
 	/**
 	 * Resets image sizes created by WordPress core or external plugins.
 	 *
-	 * @param array $meta The attachment meta data.
+	 * @param array $meta          The attachment meta data.
 	 * @param int   $attachment_id Attachment ID.
 	 *
 	 * @return mixed
@@ -302,9 +302,9 @@ class Upload {
 	/**
 	 * Adds POST data to media API upload requests.
 	 *
-	 * @param \CurlHandle $handle Handle of current cURL request.
+	 * @param \CurlHandle $handle  Handle of current cURL request.
 	 * @param array       $request Request parameters.
-	 * @param string      $url Request URL.
+	 * @param string      $url     Request URL.
 	 *
 	 * @return void
 	 */

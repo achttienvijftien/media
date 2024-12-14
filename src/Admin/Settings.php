@@ -65,7 +65,7 @@ class Settings {
 				do_settings_sections( self::GENERAL_PAGE_SLUG );
 				?>
 				<input name="submit" class="button button-primary" type="submit"
-					   value="<?php esc_attr_e( 'Save' ); ?>"/>
+						value="<?php esc_attr_e( 'Save' ); ?>"/>
 			</form>
 		</div>
 		<?php

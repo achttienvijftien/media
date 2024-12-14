@@ -27,7 +27,7 @@ class Api {
 	 * @return array|null
 	 * @todo: move access token to options.
 	 */
-	private static function get_access_token( $scope = 'UPLOAD' ): ?array {
+	private static function get_access_token( string $scope = 'UPLOAD' ): ?array {
 		if ( null === self::$access_token || empty( self::$access_token[ $scope ] ) ) {
 			global $wp_version;
 
@@ -81,7 +81,7 @@ class Api {
 	 * Upload file to API.
 	 *
 	 * @param string $file_path Local file path.
-	 * @param array  $data Data to send with upload request.
+	 * @param array  $data      Data to send with upload request.
 	 *
 	 * @return bool|null
 	 */
@@ -132,7 +132,9 @@ class Api {
 		}
 
 		$response = wp_safe_remote_request(
-			rtrim( Config::get_instance()->get( 'api_url' ), '/' ) . '/api/delete?' . http_build_query( [ 'path' => $file_path ] ),
+			rtrim( Config::get_instance()->get( 'api_url' ), '/' ) .
+			'/api/delete?' .
+			http_build_query( [ 'path' => $file_path ] ),
 			[
 				'method'  => 'DELETE',
 				'headers' => [

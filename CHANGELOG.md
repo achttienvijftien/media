@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add Gravity Forms file upload field compatibility
+
 ## [0.7.1] - 2024-09-25
 
 ### Fixed
