@@ -1,5 +1,5 @@
 {
-    "name": "1815/media",
+    "name": "achttienvijftien/media",
     "description": "Media plugin by 1815.",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later",
@@ -36,5 +36,8 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
+    },
+    "replace": {
+        "1815/media": "self.version"
     }
 }

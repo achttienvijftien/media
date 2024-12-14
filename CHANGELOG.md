@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add Gravity Forms file upload field compatibility
 
+### Changed
+
+- Rename package to `achttienvijftien/media`
+
 ## [0.7.1] - 2024-09-25
 
 ### Fixed
