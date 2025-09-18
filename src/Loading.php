@@ -8,7 +8,7 @@
 namespace AchttienVijftien\Plugin\Media;
 
 /**
- * All public facing logic for the plugin.
+ * All public-facing logic for the plugin.
  */
 class Loading {
 
@@ -32,7 +32,7 @@ class Loading {
 	}
 
 	/**
-	 * Checks if current image is uploaded to API.
+	 * Checks if the current image is uploaded to API.
 	 *
 	 * @param int $attachment_id The attachment id.
 	 *
@@ -67,29 +67,30 @@ class Loading {
 	 * Replaces url with filtered url based on requested image size.
 	 *
 	 * @param string $full_url Full url.
-	 * @param array  $size Size array of image.
+	 * @param array  $size     Size array of image.
 	 *
 	 * @return string
 	 */
 	private function replace_url( string $full_url, array $size ) {
 		$options = $this->get_image_options( $size );
 
-		// if no options, return original url.
+		// if no options, return the original url.
 		if ( ! $options ) {
 			return $full_url;
 		}
 
-		// build new image url.
+		// build a new image url.
 		return str_replace( 'i/full', 'i/' . http_build_query( $options ), $full_url );
 	}
 
 	/**
 	 * Replaces URL of uploaded attachments.
 	 *
-	 * @param string $url Url of attachment.
+	 * @param string $url           Url of attachment.
 	 * @param int    $attachment_id Attachment id.
 	 *
 	 * @return string
+	 * @throws \WP_Exception
 	 */
 	public function get_attachment_url( $url, $attachment_id ) {
 		if ( ! $this->is_uploaded( $attachment_id ) ) {
@@ -109,7 +110,7 @@ class Loading {
 		// override URL.
 		$url = rtrim( $media_url, '/' ) . '/dl/' . $file;
 
-		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+		if ( ! $this->is_image( (int) $attachment_id ) ) {
 			return $url;
 		}
 
@@ -117,11 +118,31 @@ class Loading {
 	}
 
 	/**
+	 * Checks whether the attachment is an image. SVGs are not counting as images.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 *
+	 * @return bool
+	 * @throws \WP_Exception
+	 */
+	private function is_image( int $attachment_id ): bool {
+		$attachment = Attachment::from_id( $attachment_id );
+
+		try {
+			return $attachment->is_image();
+		} catch ( \Exception $e ) {
+			wp_trigger_error( self::class . '::' . __FUNCTION__, $e->getMessage(), E_USER_WARNING );
+
+			return false;
+		}
+	}
+
+	/**
 	 * Get the image src for the image.
 	 *
-	 * @param array|bool   $image The image src.
+	 * @param array|bool   $image         The image src.
 	 * @param int|string   $attachment_id The attachment id.
-	 * @param string|array $size The size.
+	 * @param string|array $size          The size.
 	 *
 	 * @return array|bool The image src.
 	 */
@@ -158,18 +179,19 @@ class Loading {
 	/**
 	 * Sets correct sizes urls for media library.
 	 *
-	 * @param array    $response Response array.
+	 * @param array    $response   Response array.
 	 * @param \WP_Post $attachment Attachment object.
 	 *
 	 * @return array
+	 * @throws \WP_Exception
 	 */
 	public function prepare_attachment_for_js( $response, $attachment ) {
-		if ( ! $this->is_uploaded( (int) $attachment->ID ) ) {
+		if ( ! $this->is_uploaded( $attachment->ID ) ) {
 			return $response;
 		}
 
 		// if not an image, return original response.
-		if ( ! wp_attachment_is_image( $attachment->ID ) ) {
+		if ( ! $this->is_image( $attachment->ID ) ) {
 			return $response;
 		}
 
@@ -228,13 +250,14 @@ class Loading {
 	/**
 	 * Overwrite image srcset sources with media url of given sources.
 	 *
-	 * @param array      $sources Sources array defined by default WP function.
-	 * @param array      $sizes Sizes of original image.
-	 * @param string     $src Image url.
-	 * @param array      $meta Image meta data.
+	 * @param array      $sources       Sources array defined by default WP function.
+	 * @param array      $sizes         Sizes of original image.
+	 * @param string     $src           Image url.
+	 * @param array      $meta          Image meta data.
 	 * @param string|int $attachment_id Attachment id.
 	 *
 	 * @return array
+	 * @throws \WP_Exception
 	 */
 	public function wp_calculate_image_srcset( $sources, $sizes, $src, $meta, $attachment_id ) {
 		// skip if not uploaded to api.
@@ -266,7 +289,7 @@ class Loading {
 	/**
 	 * Add media url to dns prefetch.
 	 *
-	 * @param array  $urls Urls to hint.
+	 * @param array  $urls          Urls to hint.
 	 * @param string $relation_type Relation type.
 	 *
 	 * @return array

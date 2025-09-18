@@ -10,7 +10,7 @@ namespace AchttienVijftien\Plugin\Media;
 use WP_Image_Editor;
 
 /**
- * All upload logic for the plugin.
+ * All uploads logic for the plugin.
  */
 class Upload {
 
@@ -46,6 +46,7 @@ class Upload {
 			'webp'                         => 'image/webp',
 			'ico'                          => 'image/x-icon',
 			'heic'                         => 'image/heic',
+			'svg'                          => 'image/svg+xml',
 			// Text formats.
 			'txt|asc|c|cc|h|srt'           => 'text/plain',
 			'csv'                          => 'text/csv',
@@ -129,12 +130,13 @@ class Upload {
 	}
 
 	/**
-	 * Uploads local file to mediatool.
+	 * Uploads a local file to mediatool.
 	 *
 	 * @param int    $attachment_id Attachment ID.
 	 * @param string $local_file    Local file path.
 	 *
 	 * @return bool
+	 * @throws \WP_Exception
 	 */
 	private function upload_file( int $attachment_id, string $local_file ): bool {
 		$upload_dir = wp_upload_dir();
@@ -155,8 +157,7 @@ class Upload {
 		// add flag to attachment meta.
 		add_post_meta( $attachment_id, '_1815_media_uploaded', true );
 
-		// if an image, add extra meta data.
-		if ( wp_attachment_is_image( $attachment_id ) ) {
+		if ( $this->is_image( $attachment_id ) ) {
 			$image_size = wp_getimagesize( $local_file );
 			if ( $image_size ) {
 				wp_update_attachment_metadata(
@@ -173,16 +174,39 @@ class Upload {
 			}
 		}
 
-		// delete file from local filesystem.
+		// delete a file from the local filesystem.
 		wp_delete_file( $local_file );
 
 		return true;
 	}
 
 	/**
+	 * Checks whether the attachment is an image. SVGs are not counting as images.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 *
+	 * @return bool
+	 * @throws \WP_Exception
+	 */
+	private function is_image( int $attachment_id ): bool {
+		$attachment = Attachment::from_id( $attachment_id );
+
+		try {
+			return $attachment->is_image();
+		} catch ( \Exception $e ) {
+			wp_trigger_error( self::class . '::' . __FUNCTION__, $e->getMessage(), E_USER_WARNING );
+
+			return false;
+		}
+	}
+
+	/**
 	 * Add the attachment to the database.
 	 *
 	 * @param int $attachment_id The attachment id.
+	 *
+	 * @return void
+	 * @throws \WP_Exception
 	 */
 	public function add_attachment( $attachment_id ): void {
 		$file = get_attached_file( $attachment_id );
@@ -230,6 +254,7 @@ class Upload {
 	 * @param int             $attachment_id Attachment ID.
 	 *
 	 * @return bool|null
+	 * @throws \WP_Exception
 	 */
 	public function save_image_editor_file( $override, $filename, $image, $mime_type, $attachment_id ): ?bool {
 		$saved_image = $image->save( $filename, $mime_type );
@@ -264,6 +289,7 @@ class Upload {
 	 * @param int   $attachment_id Attachment ID.
 	 *
 	 * @return mixed
+	 * @throws \WP_Exception
 	 */
 	public function wp_update_attachment_metadata( $meta, $attachment_id ) {
 		if ( ! empty( $meta['_by_1815_media'] ) ) {
@@ -272,7 +298,7 @@ class Upload {
 			return $meta;
 		}
 
-		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+		if ( ! $this->is_image( (int) $attachment_id ) ) {
 			return $meta;
 		}
 
